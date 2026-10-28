@@ -8,7 +8,9 @@ Solo lectura: no toma reservas ni cobra.
 == Instalar ==
 1. Backup (JetBackup).
 2. Plugins → Añadir nuevo → Subir plugin → liquen-calendarios.zip → Activar.
-3. Ajustes → Liquen Calendarios: tipos con calendario (ej. Alojamientos), WhatsApp, meses a mostrar.
+3. Ajustes → Liquen Calendarios → pestaña «Asistente»: 6 preguntas sobre cómo se llevan las reservas.
+   Devuelve qué conectar en cada cabaña y qué conviene cambiar.
+   Pestaña «Ajustes»: tipos con calendario (ej. Alojamientos), WhatsApp, meses a mostrar.
 4. En cada ficha, caja «Calendario»: una fila por fuente.
    * Google Calendar: Configuración del calendario → «Dirección secreta en formato iCal».
    * Booking: Extranet → Tarifas y disponibilidad → Sincronizar calendarios → Exportar.
@@ -18,6 +20,8 @@ Solo lectura: no toma reservas ni cobra.
 6. Página general: [liquen_disponibilidad] (opcional tipos="alojamiento" o ids="12,15").
 7. cPanel → Tareas programadas, cada 30 min:
    wget -q -O - https://SITIO/wp-cron.php?doing_wp_cron >/dev/null 2>&1
+8. Pestaña «Diagnóstico»: lista de chequeo con todo lo que está bien, lo que conviene revisar y lo que hay
+   que arreglar, con la solución paso a paso. Los problemas de cada cabaña también aparecen en su caja «Calendario».
 
 == Cómo funciona ==
 * Lee las fuentes cada 30 min y al guardar la ficha (o con «Actualizar ahora»).
@@ -39,5 +43,8 @@ Solo lectura: no toma reservas ni cobra.
 == Cambios ==
 0.1.0
 * Primera versión: modo «Días completos», varias fuentes iCal por ficha, calendario en la ficha con consulta
-  por WhatsApp, página general (tabla en computadora, lista en celular), estado de los calendarios en Ajustes,
-  actualizaciones desde GitHub.
+  por WhatsApp, página general (tabla en computadora, lista en celular), actualizaciones desde GitHub.
+* Asistente: preguntas sobre cómo se llevan las reservas → qué conectar, con qué casilla y qué cambiar.
+* Diagnóstico: lista de chequeo automática (lecturas, direcciones públicas o repetidas, casilla del día de salida,
+  shortcodes en la web, tarea programada), con ayudas paso a paso.
+* Al pegar una dirección en la ficha, se detecta si es Google, Booking o Airbnb y se sugiere la casilla.

@@ -28,6 +28,7 @@ require_once LC_DIR . 'includes/ical.php';
 require_once LC_DIR . 'includes/datos.php';
 require_once LC_DIR . 'includes/sincronizar.php';
 require_once LC_DIR . 'includes/admin.php';
+require_once LC_DIR . 'includes/asistente.php';
 require_once LC_DIR . 'includes/rest.php';
 require_once LC_DIR . 'includes/web.php';
 require_once LC_DIR . 'includes/actualizaciones.php';

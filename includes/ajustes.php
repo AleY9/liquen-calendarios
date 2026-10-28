@@ -20,12 +20,9 @@ function lc_ajustes_por_defecto() {
 	);
 }
 
+// WordPress ya guarda las opciones en memoria: no hace falta otra caché (y así un cambio se ve enseguida).
 function lc_ajustes() {
-	static $cache = null;
-	if ( null === $cache ) {
-		$cache = wp_parse_args( (array) get_option( 'lc_ajustes', array() ), lc_ajustes_por_defecto() );
-	}
-	return $cache;
+	return wp_parse_args( (array) get_option( 'lc_ajustes', array() ), lc_ajustes_por_defecto() );
 }
 
 function lc_ajuste( $clave ) {

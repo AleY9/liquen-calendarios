@@ -1,6 +1,6 @@
 <?php
 /**
- * wp-admin: página de ajustes (con el estado de todos los calendarios),
+ * wp-admin: página con pestañas (Asistente, Diagnóstico, Ajustes; las dos primeras en asistente.php),
  * caja «Calendario» en cada ficha y aviso si una fuente deja de leerse.
  */
 
@@ -54,98 +54,107 @@ function lc_pantalla_ajustes() {
 	if ( ! current_user_can( 'manage_options' ) ) {
 		return;
 	}
+	$pestanas = array(
+		'asistente'   => 'Asistente',
+		'diagnostico' => 'Diagnóstico',
+		'ajustes'     => 'Ajustes',
+	);
+	$tab = sanitize_key( $_GET['tab'] ?? '' ); // phpcs:ignore
+	if ( ! isset( $pestanas[ $tab ] ) ) {
+		// La primera vez, el asistente; después, el diagnóstico.
+		$tab = lc_asistente_respondido() ? 'diagnostico' : 'asistente';
+	}
+	?>
+	<div class="wrap">
+		<h1>Liquen Calendarios</h1>
+		<?php if ( isset( $_GET['lc_leido'] ) ) : // phpcs:ignore ?>
+			<div class="notice notice-success is-dismissible"><p>Calendarios leídos.</p></div>
+		<?php endif; ?>
+		<nav class="nav-tab-wrapper" style="margin-bottom:16px">
+			<?php foreach ( $pestanas as $k => $txt ) : ?>
+				<a class="nav-tab <?php echo $tab === $k ? 'nav-tab-active' : ''; ?>" href="<?php echo esc_url( admin_url( 'options-general.php?page=liquen-calendarios&tab=' . $k ) ); ?>"><?php echo esc_html( $txt ); ?></a>
+			<?php endforeach; ?>
+		</nav>
+		<?php
+		if ( 'asistente' === $tab ) {
+			lc_tab_asistente();
+		} elseif ( 'diagnostico' === $tab ) {
+			lc_tab_diagnostico();
+		} else {
+			lc_tab_ajustes();
+		}
+		?>
+	</div>
+	<?php
+}
+
+function lc_tab_ajustes() {
 	$a     = lc_ajustes();
 	$tipos = get_post_types( array( 'public' => true ), 'objects' );
 	unset( $tipos['attachment'] );
 	?>
-	<div class="wrap">
-		<h1>Liquen Calendarios</h1>
+	<form method="post" action="options.php">
+		<?php settings_fields( 'lc_ajustes' ); ?>
+		<table class="form-table" role="presentation">
+			<tr>
+				<th scope="row">Tipos con calendario</th>
+				<td>
+					<?php foreach ( $tipos as $t ) : ?>
+						<label style="display:block;margin-bottom:4px">
+							<input type="checkbox" name="lc_ajustes[tipos][]" value="<?php echo esc_attr( $t->name ); ?>" <?php checked( in_array( $t->name, $a['tipos'], true ) ); ?>>
+							<?php echo esc_html( $t->labels->name ); ?> <code><?php echo esc_html( $t->name ); ?></code>
+						</label>
+					<?php endforeach; ?>
+					<p class="description">En estos tipos aparece la caja «Calendario» para cargar las direcciones.</p>
+				</td>
+			</tr>
+			<tr>
+				<th scope="row"><label for="lc-meses">Meses a mostrar</label></th>
+				<td><input id="lc-meses" type="number" min="1" max="12" name="lc_ajustes[meses]" value="<?php echo esc_attr( $a['meses'] ); ?>" class="small-text"></td>
+			</tr>
+			<tr>
+				<th scope="row"><label for="lc-wa">WhatsApp</label></th>
+				<td>
+					<input id="lc-wa" type="text" name="lc_ajustes[whatsapp]" value="<?php echo esc_attr( $a['whatsapp'] ); ?>" class="regular-text" placeholder="598 99 123 456">
+					<p class="description">Con código de país, sin el 0 inicial. Si queda vacío, no se muestra el botón.</p>
+				</td>
+			</tr>
+			<tr>
+				<th scope="row"><label for="lc-mf">Mensaje con fechas</label></th>
+				<td>
+					<input id="lc-mf" type="text" name="lc_ajustes[msj_fechas]" value="<?php echo esc_attr( $a['msj_fechas'] ); ?>" class="large-text">
+					<p class="description">Se puede usar {recurso}, {desde} y {hasta}.</p>
+				</td>
+			</tr>
+			<tr>
+				<th scope="row"><label for="lc-mg">Mensaje sin fechas</label></th>
+				<td><input id="lc-mg" type="text" name="lc_ajustes[msj_general]" value="<?php echo esc_attr( $a['msj_general'] ); ?>" class="large-text"></td>
+			</tr>
+			<tr>
+				<th scope="row">Textos</th>
+				<td>
+					<label>Libre <input type="text" name="lc_ajustes[txt_libre]" value="<?php echo esc_attr( $a['txt_libre'] ); ?>"></label>
+					<label style="margin-left:12px">Ocupado <input type="text" name="lc_ajustes[txt_ocupado]" value="<?php echo esc_attr( $a['txt_ocupado'] ); ?>"></label>
+					<label style="margin-left:12px">Botón <input type="text" name="lc_ajustes[txt_boton]" value="<?php echo esc_attr( $a['txt_boton'] ); ?>"></label>
+				</td>
+			</tr>
+			<tr>
+				<th scope="row">Colores</th>
+				<td>
+					<label>Acento <input type="color" name="lc_ajustes[color_acento]" value="<?php echo esc_attr( $a['color_acento'] ); ?>"></label>
+					<label style="margin-left:12px">Ocupado <input type="color" name="lc_ajustes[color_ocupado]" value="<?php echo esc_attr( $a['color_ocupado'] ); ?>"></label>
+				</td>
+			</tr>
+		</table>
+		<?php submit_button(); ?>
+	</form>
 
-		<?php if ( isset( $_GET['lc_leido'] ) ) : // phpcs:ignore ?>
-			<div class="notice notice-success is-dismissible"><p>Calendarios leídos. Revisá el estado abajo.</p></div>
-		<?php endif; ?>
-
-		<form method="post" action="options.php">
-			<?php settings_fields( 'lc_ajustes' ); ?>
-			<table class="form-table" role="presentation">
-				<tr>
-					<th scope="row">Tipos con calendario</th>
-					<td>
-						<?php foreach ( $tipos as $t ) : ?>
-							<label style="display:block;margin-bottom:4px">
-								<input type="checkbox" name="lc_ajustes[tipos][]" value="<?php echo esc_attr( $t->name ); ?>" <?php checked( in_array( $t->name, $a['tipos'], true ) ); ?>>
-								<?php echo esc_html( $t->labels->name ); ?> <code><?php echo esc_html( $t->name ); ?></code>
-							</label>
-						<?php endforeach; ?>
-						<p class="description">En estos tipos aparece la caja «Calendario» para cargar las direcciones iCal.</p>
-					</td>
-				</tr>
-				<tr>
-					<th scope="row"><label for="lc-meses">Meses a mostrar</label></th>
-					<td><input id="lc-meses" type="number" min="1" max="12" name="lc_ajustes[meses]" value="<?php echo esc_attr( $a['meses'] ); ?>" class="small-text"></td>
-				</tr>
-				<tr>
-					<th scope="row"><label for="lc-wa">WhatsApp</label></th>
-					<td>
-						<input id="lc-wa" type="text" name="lc_ajustes[whatsapp]" value="<?php echo esc_attr( $a['whatsapp'] ); ?>" class="regular-text" placeholder="598 99 123 456">
-						<p class="description">Con código de país, sin el 0 inicial. Si queda vacío, no se muestra el botón.</p>
-					</td>
-				</tr>
-				<tr>
-					<th scope="row"><label for="lc-mf">Mensaje con fechas</label></th>
-					<td>
-						<input id="lc-mf" type="text" name="lc_ajustes[msj_fechas]" value="<?php echo esc_attr( $a['msj_fechas'] ); ?>" class="large-text">
-						<p class="description">Se puede usar {recurso}, {desde} y {hasta}.</p>
-					</td>
-				</tr>
-				<tr>
-					<th scope="row"><label for="lc-mg">Mensaje sin fechas</label></th>
-					<td><input id="lc-mg" type="text" name="lc_ajustes[msj_general]" value="<?php echo esc_attr( $a['msj_general'] ); ?>" class="large-text"></td>
-				</tr>
-				<tr>
-					<th scope="row">Textos</th>
-					<td>
-						<label>Libre <input type="text" name="lc_ajustes[txt_libre]" value="<?php echo esc_attr( $a['txt_libre'] ); ?>"></label>
-						<label style="margin-left:12px">Ocupado <input type="text" name="lc_ajustes[txt_ocupado]" value="<?php echo esc_attr( $a['txt_ocupado'] ); ?>"></label>
-						<label style="margin-left:12px">Botón <input type="text" name="lc_ajustes[txt_boton]" value="<?php echo esc_attr( $a['txt_boton'] ); ?>"></label>
-					</td>
-				</tr>
-				<tr>
-					<th scope="row">Colores</th>
-					<td>
-						<label>Acento <input type="color" name="lc_ajustes[color_acento]" value="<?php echo esc_attr( $a['color_acento'] ); ?>"></label>
-						<label style="margin-left:12px">Ocupado <input type="color" name="lc_ajustes[color_ocupado]" value="<?php echo esc_attr( $a['color_ocupado'] ); ?>"></label>
-					</td>
-				</tr>
-			</table>
-			<?php submit_button(); ?>
-		</form>
-
-		<hr>
-		<h2>En la web</h2>
-		<p><strong>Ficha</strong> (plantilla de la cabaña o del salón, con el elemento Shortcode de Bricks): <code>[liquen_calendario]</code></p>
-		<p><strong>Página general</strong>: <code>[liquen_disponibilidad]</code> — opcional <code>tipos="alojamiento"</code> o <code>ids="12,15"</code>.</p>
-
-		<hr>
-		<h2>Estado de los calendarios</h2>
-		<?php lc_tabla_estado(); ?>
-		<form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>">
-			<input type="hidden" name="action" value="lc_leer_todo">
-			<?php wp_nonce_field( 'lc_leer_todo' ); ?>
-			<?php submit_button( 'Actualizar todos ahora', 'secondary', 'submit', false ); ?>
-		</form>
-		<?php
-		$ronda = (int) get_option( 'lc_ultima_ronda' );
-		$prox  = wp_next_scheduled( 'lc_sincronizar_todo' );
-		?>
-		<p class="description">
-			Lectura automática cada 30 min.
-			<?php if ( $ronda ) : ?>Última: <?php echo esc_html( lc_hace( $ronda ) ); ?>.<?php endif; ?>
-			<?php if ( $prox ) : ?>Próxima: <?php echo esc_html( wp_date( 'H:i', $prox ) ); ?>.<?php endif; ?>
-			Para que corra aunque nadie visite el sitio, agregar en cPanel una tarea programada cada 30 min:
-			<code>wget -q -O - <?php echo esc_html( site_url( 'wp-cron.php?doing_wp_cron' ) ); ?> &gt;/dev/null 2&gt;&amp;1</code>
-		</p>
-	</div>
+	<hr>
+	<h2>En la web</h2>
+	<p><strong>Ficha</strong> (plantilla de la cabaña o del salón, con el elemento Shortcode de Bricks): <code>[liquen_calendario]</code></p>
+	<p><strong>Página general</strong>: <code>[liquen_disponibilidad]</code> — opcional <code>tipos="alojamiento"</code> o <code>ids="12,15"</code>.</p>
+	<p><strong>Lectura automática</strong> cada 30 min. Para que corra aunque nadie visite el sitio, en cPanel → Tareas Cron, cada 30 min:<br>
+		<code>wget -q -O - <?php echo esc_html( site_url( 'wp-cron.php?doing_wp_cron' ) ); ?> &gt;/dev/null 2&gt;&amp;1</code></p>
 	<?php
 }
 
@@ -182,7 +191,7 @@ add_action( 'admin_post_lc_leer_todo', function () {
 	check_admin_referer( 'lc_leer_todo' );
 	delete_transient( 'lc_leyendo' );
 	lc_sincronizar_todo();
-	wp_safe_redirect( admin_url( 'options-general.php?page=liquen-calendarios&lc_leido=1' ) );
+	wp_safe_redirect( admin_url( 'options-general.php?page=liquen-calendarios&tab=diagnostico&lc_leido=1' ) );
 	exit;
 } );
 
@@ -225,6 +234,32 @@ function lc_caja( WP_Post $post ) {
 	$estado  = lc_estado( $post->ID );
 	$modo    = lc_modo( $post->ID );
 	wp_nonce_field( 'lc_caja', 'lc_caja_nonce' );
+	$diag   = admin_url( 'options-general.php?page=liquen-calendarios&tab=diagnostico' );
+	$asist  = admin_url( 'options-general.php?page=liquen-calendarios&tab=asistente' );
+	$ocupa  = 'se_alquila' !== ( lc_asistente()['salida'] ?? 'ocupa' );
+	if ( function_exists( 'lc_estilos_admin' ) ) {
+		lc_estilos_admin();
+	}
+
+	// Problemas de esta ficha, arriba de todo.
+	if ( $fuentes ) {
+		$problemas = array_filter( lc_diagnostico(), function ( $it ) use ( $post ) {
+			return (int) $it['recurso'] === $post->ID && 'ok' !== $it['estado'];
+		} );
+		foreach ( $problemas as $it ) {
+			printf(
+				'<div class="lc-item lc-%1$s"><span class="lc-ico">%2$s</span><div><p>%3$s</p>%4$s</div></div>',
+				esc_attr( $it['estado'] ),
+				'mal' === $it['estado'] ? '✕' : '!',
+				esc_html( $it['texto'] ),
+				lc_html_ayuda( $it['ayuda'] ) // phpcs:ignore
+			);
+		}
+	} elseif ( ! lc_asistente_respondido() ) {
+		printf( '<p>¿No sabés qué dirección poner? Respondé el <a href="%s">asistente</a>: son 6 preguntas.</p>', esc_url( $asist ) );
+	} else {
+		printf( '<p>Qué conectar: mirá <a href="%s">tu recomendación</a>.</p>', esc_url( $asist . '#lc-recomendacion' ) );
+	}
 	?>
 	<p>
 		<label><strong>Modo</strong>
@@ -249,10 +284,10 @@ function lc_caja( WP_Post $post ) {
 		</tbody>
 	</table>
 	<p class="description">
-		<strong>Google Calendar:</strong> Configuración del calendario → «Dirección secreta en formato iCal». Día de salida: sin marcar.<br>
-		<strong>Booking:</strong> Extranet → Tarifas y disponibilidad → Sincronizar calendarios → Exportar. Día de salida: marcar si el día que se van no se puede alquilar.<br>
+		Al pegar una dirección, la casilla del día de salida se marca sola según el tipo de calendario<?php echo lc_asistente_respondido() ? ' y tus respuestas del asistente' : ''; ?>. Revisala igual.
 		Las direcciones son secretas: no se muestran en la web ni completas acá después de guardarlas. Para cambiar una, escribí la nueva encima.
 	</p>
+	<?php echo lc_html_ayuda( 'google' ) . lc_html_ayuda( 'booking' ) . lc_html_ayuda( 'airbnb' ); // phpcs:ignore ?>
 	<p>
 		<button type="button" class="button" id="lc-otra">+ Otra fuente</button>
 		<?php if ( $fuentes ) : ?>
@@ -270,6 +305,32 @@ function lc_caja( WP_Post $post ) {
 
 	<script>
 	( function () {
+		// Al pegar una dirección: se detecta el tipo y se sugiere la casilla y el nombre.
+		var ocupa = <?php echo $ocupa ? 'true' : 'false'; ?>;
+		var tabla = document.querySelector( '.lc-fuentes' );
+		if ( tabla ) {
+			tabla.addEventListener( 'input', function ( ev ) {
+				var el = ev.target;
+				if ( ! /\[url\]$/.test( el.name ) ) { return; }
+				var fila = el.closest( 'tr' );
+				var u = el.value.toLowerCase();
+				var tipo = /google\.com/.test( u ) ? 'Google' : /booking\.com/.test( u ) ? 'Booking' : /airbnb\./.test( u ) ? 'Airbnb' : '';
+				var nota = fila.querySelector( '.lc-nota' );
+				if ( ! nota ) { nota = document.createElement( 'div' ); nota.className = 'lc-nota description'; el.parentNode.appendChild( nota ); }
+				if ( ! tipo ) { nota.textContent = ''; return; }
+				var casilla = fila.querySelector( '[name$="[salida_ocupa]"]' );
+				var nombre = fila.querySelector( '[name$="[nombre]"]' );
+				if ( nombre && ! nombre.value ) { nombre.value = tipo; }
+				if ( tipo === 'Google' ) {
+					casilla.checked = false;
+					nota.textContent = /\/public\//.test( u ) ? '⚠ Es la dirección pública: usá la «Dirección secreta en formato iCal».' : 'Google: casilla sin marcar (el evento ya incluye el día de salida).';
+				} else {
+					casilla.checked = ocupa;
+					nota.textContent = tipo + ': ' + ( ocupa ? 'casilla marcada (cuenta noches y deja libre el día de salida).' : 'casilla sin marcar (el día de salida se vuelve a alquilar).' );
+				}
+			} );
+		}
+
 		var btn = document.getElementById( 'lc-otra' );
 		if ( ! btn ) { return; }
 		btn.addEventListener( 'click', function () {
@@ -404,6 +465,13 @@ add_action( 'admin_notices', function () {
 	if ( ! current_user_can( 'manage_options' ) ) {
 		return;
 	}
+	$pant = get_current_screen();
+	if ( $pant && in_array( $pant->id, array( 'dashboard', 'plugins' ), true ) && ! lc_asistente_respondido() ) {
+		printf(
+			'<div class="notice notice-info"><p><strong>Liquen Calendarios:</strong> para empezar, respondé el <a href="%s">asistente</a> (6 preguntas): te dice qué calendario conectar en cada cabaña.</p></div>',
+			esc_url( admin_url( 'options-general.php?page=liquen-calendarios&tab=asistente' ) )
+		);
+	}
 	$pantalla = get_current_screen();
 	if ( ! $pantalla || ! in_array( $pantalla->id, array( 'dashboard', 'plugins', 'settings_page_liquen-calendarios' ), true ) ) {
 		return;
@@ -422,7 +490,7 @@ add_action( 'admin_notices', function () {
 		printf(
 			'<div class="notice notice-warning"><p><strong>Liquen Calendarios:</strong> hace más de 6 horas que no se pueden leer estos calendarios, así que la web puede mostrar días viejos: %s. <a href="%s">Ver el estado</a></p></div>',
 			esc_html( implode( ', ', $malas ) ),
-			esc_url( admin_url( 'options-general.php?page=liquen-calendarios' ) )
+			esc_url( admin_url( 'options-general.php?page=liquen-calendarios&tab=diagnostico' ) )
 		);
 	}
 } );

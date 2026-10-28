@@ -8,6 +8,7 @@ defined( 'WP_UNINSTALL_PLUGIN' ) || exit;
 global $wpdb;
 $wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}lc_ocupaciones" ); // phpcs:ignore
 delete_option( 'lc_ajustes' );
+delete_option( 'lc_asistente' );
 delete_option( 'lc_db_version' );
 delete_option( 'lc_cache_version' );
 delete_option( 'lc_ultima_ronda' );
