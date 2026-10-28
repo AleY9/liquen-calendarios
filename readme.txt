@@ -1,5 +1,5 @@
 === Liquen Calendarios ===
-Versión: 0.1.0 · Requiere: WordPress 6.4+, PHP 8.0+
+Versión: 0.1.1 · Requiere: WordPress 6.4+, PHP 8.0+
 
 Disponibilidad de cabañas, salones y otros recursos leída de calendarios iCal
 (Google Calendar, Booking, Airbnb). La web muestra días libres y ocupados y arma la consulta por WhatsApp.
@@ -41,6 +41,13 @@ Solo lectura: no toma reservas ni cobra.
 * Solo fechas: ni precios, ni datos de huéspedes, ni pagos.
 
 == Cambios ==
+0.1.1
+* Asistente: opción para sitios con calendarios mezclados (ej. salón en «Mis calendarios» y cabañas de Booking en
+  «Otros calendarios»). La recomendación aclara que las fuentes se cargan por unidad.
+* Respaldo de la lectura automática: si está atrasada más de una hora, se dispara cuando alguien abre un calendario.
+* Al activar el plugin, WordPress revisa actualizaciones en el momento (aparece enseguida «Activar las
+  actualizaciones automáticas»).
+
 0.1.0
 * Primera versión: modo «Días completos», varias fuentes iCal por ficha, calendario en la ficha con consulta
   por WhatsApp, página general (tabla en computadora, lista en celular), actualizaciones desde GitHub.

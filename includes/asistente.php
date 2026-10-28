@@ -55,6 +55,7 @@ function lc_asistente_preguntas(): array {
 			'opciones' => array(
 				'uno_por_unidad' => 'Uno por cada cabaña (o salón), en «Mis calendarios»',
 				'uno_para_todo'  => 'Un solo calendario para todo',
+				'mixto'          => 'Algunos en «Mis calendarios» (ej. el salón) y otros en «Otros calendarios» (ej. cabañas que vienen de Booking)',
 				'otros'          => 'Los de las cabañas están en «Otros calendarios»',
 				'no_se'          => 'No sé',
 			),
@@ -219,6 +220,9 @@ function lc_recomendacion( array $r ): array {
 					'ayuda' => 'mis_otros',
 				);
 				break;
+			case 'mixto':
+				$out['ok'][] = array( 'texto' => 'Cada unidad lleva su propia fuente: las que están en «Mis calendarios» (ej. el salón) se conectan con su dirección secreta de Google; las de «Otros calendarios» no se conectan: para esas unidades va el enlace de la plataforma (Booking, Airbnb).', 'ayuda' => 'mis_otros' );
+				break;
 			case 'no_se':
 				$out['hacer'][] = array( 'texto' => 'Fijate en Google Calendar si los calendarios de las cabañas están en «Mis calendarios» o en «Otros calendarios», y volvé a responder.', 'ayuda' => 'mis_otros' );
 				break;
@@ -226,7 +230,7 @@ function lc_recomendacion( array $r ): array {
 		// Se recomienda conectar Google salvo que sus calendarios no sean propios o no se sepa cómo están.
 		if ( ! in_array( $google, array( 'otros', 'no_se' ), true ) ) {
 			$out['conectar'][] = array(
-				'fuente'  => 'Google Calendar' . ( 'respaldo' === $google_conecta ? ' (opcional, como respaldo)' : '' ),
+				'fuente'  => 'mixto' === $google ? 'Google Calendar (solo las unidades que están en «Mis calendarios», ej. el salón)' : 'Google Calendar' . ( 'respaldo' === $google_conecta ? ' (opcional, como respaldo)' : '' ),
 				'como'    => 'Dirección secreta en formato iCal de cada calendario (uno por cabaña).',
 				'casilla' => false,
 				'ayuda'   => 'google',
@@ -662,6 +666,7 @@ function lc_tab_asistente() {
 
 		<?php if ( $reco['conectar'] ) : ?>
 			<h3>Qué conectar en la caja «Calendario» de cada cabaña</h3>
+			<p class="description">Las fuentes se cargan por unidad: cada cabaña o salón lleva solo las que le corresponden (ej. las cabañas el enlace de Booking y el salón su calendario de Google).</p>
 			<?php foreach ( $reco['conectar'] as $c ) : ?>
 				<div class="lc-fuente-reco">
 					<strong><?php echo esc_html( $c['fuente'] ); ?></strong> — <?php echo esc_html( $c['como'] ); ?><br>

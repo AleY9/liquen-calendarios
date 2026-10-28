@@ -34,6 +34,13 @@ add_action( 'rest_api_init', function () {
 } );
 
 function lc_rest_disponibilidad( WP_REST_Request $req ) {
+	// Respaldo: si la lectura automática está atrasada más de una hora (sitio con pocas visitas o
+	// WP-Cron trabado), se dispara en segundo plano. No demora la respuesta.
+	$prox = wp_next_scheduled( 'lc_sincronizar_todo' );
+	if ( $prox && $prox < time() - HOUR_IN_SECONDS && ! get_transient( 'lc_leyendo' ) && function_exists( 'spawn_cron' ) ) {
+		spawn_cron();
+	}
+
 	$ids   = (array) $req->get_param( 'recursos' );
 	$meses = min( lc_meses(), max( 1, (int) ( $req->get_param( 'meses' ) ?: lc_meses() ) ) );
 	$hoy   = lc_hoy();
