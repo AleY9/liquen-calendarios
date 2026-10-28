@@ -65,6 +65,13 @@
 		return ( fecha( s ).getUTCDay() - SEMANA + 7 ) % 7;
 	}
 
+	// Mes con el que abre: el actual, o el siguiente si al actual le quedan menos de 7 días.
+	function mesInicial( datos ) {
+		var quedan = diasDelMes( datos.hoy ) - parseInt( datos.hoy.slice( 8, 10 ), 10 ) + 1;
+		var sig = masMeses( datos.desde, 1 );
+		return quedan < 7 && sig < datos.hasta ? sig : datos.desde;
+	}
+
 	/* ---------- Datos ---------- */
 
 	function pedir( ids ) {
@@ -143,7 +150,7 @@
 			this.ocupados[ d ] = true;
 		}, this );
 		this.inicioVentana = datos.desde;
-		this.mes = datos.desde;
+		this.mes = mesInicial( datos );
 		this.desde = null;
 		this.hasta = null;
 		this.aviso = '';
@@ -341,7 +348,7 @@
 		this.caja = caja;
 		this.lista = lista;
 		this.datos = datos;
-		this.mes = datos.desde;
+		this.mes = mesInicial( datos );
 		this.porId = {};
 		( datos.recursos || [] ).forEach( function ( r ) {
 			this.porId[ r.id ] = r;

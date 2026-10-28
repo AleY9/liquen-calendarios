@@ -6,8 +6,9 @@
 .lc-disp {
 	--lc-texto: currentColor;
 	--lc-libre: transparent;
-	--lc-borde: rgba(0, 0, 0, .12);
-	--lc-tenue: rgba(0, 0, 0, .35);
+	/* Derivados del color del texto: funcionan sobre fondos claros y oscuros. */
+	--lc-borde: color-mix(in srgb, currentColor 18%, transparent);
+	--lc-tenue: color-mix(in srgb, currentColor 45%, transparent);
 	--lc-radio: 8px;
 	font-size: 15px;
 	line-height: 1.3;
@@ -75,6 +76,12 @@
 	color: var(--lc-tenue);
 	text-transform: uppercase;
 	padding: 2px 0;
+}
+.lc-cal .lc-dia {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	text-align: center;
 }
 .lc-dia {
 	aspect-ratio: 1 / 1;
@@ -184,14 +191,12 @@
 	background: none;
 }
 .lc-t-nombre {
-	width: 120px;
+	width: 160px;
 	text-align: left;
 	font-size: 14px;
 	font-weight: 600;
 	padding-right: 8px !important;
-	white-space: nowrap;
-	overflow: hidden;
-	text-overflow: ellipsis;
+	line-height: 1.2;
 }
 .lc-t-nombre a {
 	color: inherit;
