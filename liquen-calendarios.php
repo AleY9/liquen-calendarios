@@ -38,6 +38,9 @@ register_deactivation_hook( __FILE__, 'lc_desactivar' );
 
 function lc_activar() {
 	lc_crear_tabla();
+	// Que WordPress vuelva a revisar actualizaciones ya: así aparece enseguida
+	// «Activar las actualizaciones automáticas» en la lista de plugins.
+	delete_site_transient( 'update_plugins' );
 	if ( ! wp_next_scheduled( 'lc_sincronizar_todo' ) ) {
 		wp_schedule_event( time() + 60, 'lc_media_hora', 'lc_sincronizar_todo' );
 	}
