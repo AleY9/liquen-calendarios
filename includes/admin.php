@@ -39,7 +39,7 @@ function lc_limpiar_ajustes( $in ) {
 	$out['tipos']    = array_values( array_filter( array_map( 'sanitize_key', (array) ( $in['tipos'] ?? array() ) ), 'post_type_exists' ) );
 	$out['meses']    = max( 1, min( 12, (int) ( $in['meses'] ?? $def['meses'] ) ) );
 	$out['whatsapp'] = preg_replace( '/\D+/', '', (string) ( $in['whatsapp'] ?? '' ) );
-	foreach ( array( 'msj_fechas', 'msj_general', 'txt_libre', 'txt_ocupado', 'txt_boton' ) as $k ) {
+	foreach ( array( 'msj_fechas', 'msj_general', 'txt_libre', 'txt_ocupado', 'txt_boton', 'txt_elegir' ) as $k ) {
 		$v         = sanitize_text_field( (string) ( $in[ $k ] ?? '' ) );
 		$out[ $k ] = '' !== $v ? $v : $def[ $k ];
 	}
@@ -124,6 +124,13 @@ function lc_tab_ajustes() {
 				<td>
 					<input id="lc-mf" type="text" name="lc_ajustes[msj_fechas]" value="<?php echo esc_attr( $a['msj_fechas'] ); ?>" class="large-text">
 					<p class="description">Se puede usar {recurso}, {desde} y {hasta}.</p>
+				</td>
+			</tr>
+			<tr>
+				<th scope="row"><label for="lc-guia">Indicación arriba del calendario</label></th>
+				<td>
+					<input id="lc-guia" type="text" name="lc_ajustes[txt_elegir]" value="<?php echo esc_attr( $a['txt_elegir'] ); ?>" class="large-text">
+					<p class="description">Se ve destacada antes de elegir fechas. Después cambia sola («Ahora tocá el día de salida», «Listo…»).</p>
 				</td>
 			</tr>
 			<tr>

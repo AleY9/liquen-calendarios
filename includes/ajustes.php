@@ -15,6 +15,7 @@ function lc_ajustes_por_defecto() {
 		'txt_libre'       => 'Libre',
 		'txt_ocupado'     => 'Ocupado',
 		'txt_boton'       => 'Consultar por WhatsApp',
+		'txt_elegir'      => 'Tocá el día de llegada y el de salida. Las fechas se envían en el mensaje de WhatsApp.',
 		'color_acento'    => '#2f6b4f',
 		'color_ocupado'   => '#d9d4cc',
 	);

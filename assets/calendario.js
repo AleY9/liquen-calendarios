@@ -274,6 +274,22 @@
 		this.caja.innerHTML = '';
 		this.caja.classList.add( 'lc-listo' );
 
+		var conConsulta = ! this.opc.vistaPrevia && C.whatsapp;
+
+		// Guía arriba del calendario: dice qué hacer en cada paso.
+		if ( conConsulta ) {
+			var guia = el( 'div', 'lc-guia' );
+			guia.setAttribute( 'role', 'status' );
+			guia.innerHTML = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>';
+			var paso = this.desde && this.hasta ? T.listo : this.desde ? T.salida : T.elegir;
+			guia.appendChild( el( 'span', '', paso ) );
+			if ( this.aviso ) {
+				guia.classList.add( 'lc-guia-aviso' );
+				guia.lastChild.textContent = this.aviso;
+			}
+			this.caja.appendChild( guia );
+		}
+
 		this.caja.appendChild( navegacion(
 			function () {
 				yo.mes = masMeses( yo.mes, -1 );
@@ -298,31 +314,25 @@
 		this.caja.appendChild( meses );
 		this.caja.appendChild( leyenda() );
 
-		if ( this.opc.vistaPrevia || ! C.whatsapp ) {
+		if ( ! conConsulta ) {
 			return;
 		}
 
-		// Selección y botón de WhatsApp.
+		// Abajo: las fechas elegidas y el botón de WhatsApp.
 		var pie = el( 'div', 'lc-pie' );
-		var info = el( 'p', 'lc-info' );
-		if ( this.desde && this.hasta ) {
-			info.textContent = T.llegada + ': ' + corta( this.desde ) + ' · ' + T.salidaTxt + ': ' + corta( this.hasta ) + ' ';
+		if ( this.desde ) {
+			var info = el( 'p', 'lc-info' );
+			info.textContent = T.llegada + ': ' + corta( this.desde ) + ( this.hasta ? ' · ' + T.salidaTxt + ': ' + corta( this.hasta ) : '' ) + ' ';
 			var borrar = el( 'button', 'lc-borrar', T.borrar );
 			borrar.type = 'button';
 			borrar.addEventListener( 'click', function () {
 				yo.desde = yo.hasta = null;
+				yo.aviso = '';
 				yo.render();
 			} );
 			info.appendChild( borrar );
-		} else if ( this.desde ) {
-			info.textContent = T.llegada + ': ' + corta( this.desde ) + '. ' + T.salida;
-		} else {
-			info.textContent = T.elegir;
+			pie.appendChild( info );
 		}
-		if ( this.aviso ) {
-			pie.appendChild( el( 'p', 'lc-aviso-sel', this.aviso ) );
-		}
-		pie.appendChild( info );
 
 		var texto = this.desde && this.hasta ?
 			mensaje( C.msjFechas, { recurso: this.recurso.titulo, desde: corta( this.desde ), hasta: corta( this.hasta ) } ) :

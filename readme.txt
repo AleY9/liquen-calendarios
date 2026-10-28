@@ -1,5 +1,5 @@
 === Liquen Calendarios ===
-Versión: 0.1.3 · Requiere: WordPress 6.4+, PHP 8.0+
+Versión: 0.1.4 · Requiere: WordPress 6.4+, PHP 8.0+
 
 Disponibilidad de cabañas, salones y otros recursos leída de calendarios iCal
 (Google Calendar, Booking, Airbnb). La web muestra días libres y ocupados y arma la consulta por WhatsApp.
@@ -41,6 +41,12 @@ Solo lectura: no toma reservas ni cobra.
 * Solo fechas: ni precios, ni datos de huéspedes, ni pagos.
 
 == Cambios ==
+0.1.4
+* Guía destacada arriba del calendario, que cambia en cada paso: «Tocá el día de llegada y el de salida. Las fechas
+  se envían en el mensaje de WhatsApp» → «Ahora tocá el día de salida» → «Listo: tocá … para enviar las fechas».
+  Los avisos (días ocupados en el medio) también aparecen ahí, en rojo.
+* El primer texto de la guía se cambia en Ajustes → «Indicación arriba del calendario».
+
 0.1.3
 * Flechas de los meses con ícono dibujado: quedan centradas en el círculo con cualquier tipografía.
 * Página general: más espacio entre las filas y números de dos cifras sin cortarse.
