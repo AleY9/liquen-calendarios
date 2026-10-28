@@ -120,14 +120,22 @@
 		return l;
 	}
 
+	// Ícono dibujado (no un carácter): queda centrado en el círculo con cualquier tipografía.
+	function flecha( lado ) {
+		var d = lado === 'izq' ? 'M15 18l-6-6 6-6' : 'M9 18l6-6-6-6';
+		return '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="' + d + '"/></svg>';
+	}
+
 	function navegacion( alAnterior, alSiguiente, puedeAnt, puedeSig, titulo ) {
 		var nav = el( 'div', 'lc-nav' );
-		var a = el( 'button', 'lc-flecha', '‹' );
+		var a = el( 'button', 'lc-flecha' );
+		a.innerHTML = flecha( 'izq' );
 		a.type = 'button';
 		a.setAttribute( 'aria-label', T.anterior );
 		a.disabled = ! puedeAnt;
 		a.addEventListener( 'click', alAnterior );
-		var s = el( 'button', 'lc-flecha', '›' );
+		var s = el( 'button', 'lc-flecha' );
+		s.innerHTML = flecha( 'der' );
 		s.type = 'button';
 		s.setAttribute( 'aria-label', T.siguiente );
 		s.disabled = ! puedeSig;

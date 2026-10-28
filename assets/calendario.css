@@ -34,16 +34,22 @@
 	text-align: center;
 }
 .lc-flecha {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	flex: none;
 	background: none;
 	border: 1px solid var(--lc-borde);
 	border-radius: 50%;
 	width: 36px;
 	height: 36px;
-	font-size: 22px;
-	line-height: 1;
+	line-height: 0;
 	cursor: pointer;
 	color: inherit;
-	padding: 0;
+	padding: 0 !important;
+}
+.lc-flecha svg {
+	display: block;
 }
 .lc-flecha:disabled {
 	opacity: .25;
@@ -179,7 +185,7 @@
 }
 .lc-tabla {
 	border-collapse: separate;
-	border-spacing: 1px;
+	border-spacing: 2px 6px;
 	width: 100%;
 	table-layout: fixed;
 	font-size: 12px;
@@ -191,7 +197,7 @@
 	background: none;
 }
 .lc-t-nombre {
-	width: 160px;
+	width: 140px;
 	text-align: left;
 	font-size: 14px;
 	font-weight: 600;
@@ -207,6 +213,11 @@
 }
 .lc-t-dia span {
 	display: block;
+	white-space: nowrap;
+	letter-spacing: -0.02em;
+}
+.lc-t-num {
+	font-size: 11px;
 }
 .lc-t-dsem {
 	color: var(--lc-tenue);
