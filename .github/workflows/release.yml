@@ -1,0 +1,38 @@
+# Al publicar una release en GitHub, arma liquen-calendarios.zip (con la carpeta liquen-calendarios/)
+# y lo adjunta a la release. Ese zip es el que descargan los sitios al actualizar.
+name: Zip de la release
+
+on:
+  release:
+    types: [published]
+
+permissions:
+  contents: write
+
+jobs:
+  zip:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Revisar que la versión del plugin coincida con la etiqueta
+        run: |
+          TAG="${GITHUB_REF_NAME#v}"
+          CABECERA=$(grep -m1 -E '^\s*\*\s*Version:' liquen-calendarios.php | sed -E 's/.*Version:\s*//; s/\s*$//')
+          CONSTANTE=$(grep -m1 "LC_VERSION'," liquen-calendarios.php | sed -E "s/.*'LC_VERSION',\s*'([^']+)'.*/\1/")
+          echo "Etiqueta: $TAG · Cabecera: $CABECERA · LC_VERSION: $CONSTANTE"
+          if [ "$TAG" != "$CABECERA" ] || [ "$TAG" != "$CONSTANTE" ]; then
+            echo "::error::La etiqueta ($TAG) no coincide con Version ($CABECERA) o LC_VERSION ($CONSTANTE) en liquen-calendarios.php"
+            exit 1
+          fi
+
+      - name: Armar el zip
+        run: |
+          mkdir -p build/liquen-calendarios
+          rsync -a --exclude '.git' --exclude '.github' --exclude 'build' --exclude 'README.md' ./ build/liquen-calendarios/
+          cd build && zip -rq liquen-calendarios.zip liquen-calendarios
+
+      - name: Adjuntar el zip a la release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release upload "$GITHUB_REF_NAME" build/liquen-calendarios.zip --clobber
