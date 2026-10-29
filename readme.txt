@@ -46,6 +46,7 @@ Solo lectura: no toma reservas ni cobra.
   o salón con su mes, si sus calendarios se leen bien y el botón «Actualizar ahora». Solo para editores y administradores.
   Recordatorio dentro de la sección: las reservas se cierran en Booking (app Pulse) o en Google; el panel no marca fechas.
 * Ajustes: recuadro «Qué hace / Qué no hace».
+* Actualizaciones: ya no queda el aviso «Hay una nueva versión» después de que se instaló sola.
 * La tarea programada recomendada usa PHP directo en la carpeta del sitio (el wget fallaba en silencio en algunos hostings).
 
 0.1.4
