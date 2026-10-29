@@ -125,7 +125,7 @@ function lc_panel_vista_recurso( int $id ): string {
 
 	// Fuentes de este recurso (sin las direcciones: son secretas).
 	$estado = lc_estado( $id );
-	$h     .= '<section class="lp-card"><h2>Calendarios que se leen</h2><ul class="lc-p-fuentes">';
+	$h     .= '<section class="lp-card lc-p-fuentes-card"><h2>Calendarios que se leen</h2><ul class="lc-p-fuentes">';
 	foreach ( lc_fuentes( $id ) as $f ) {
 		$e   = $estado[ $f['id'] ] ?? array();
 		$txt = ! empty( $e['ok'] ) ? 'leído ' . lc_hace( (int) $e['ok'] ) . ' · ' . (int) ( $e['eventos'] ?? 0 ) . ' reservas o bloqueos' : 'todavía no se leyó';

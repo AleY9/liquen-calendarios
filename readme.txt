@@ -1,5 +1,5 @@
 === Liquen Calendarios ===
-Versión: 0.1.5 · Requiere: WordPress 6.4+, PHP 8.0+
+Versión: 0.1.6 · Requiere: WordPress 6.4+, PHP 8.0+
 
 Disponibilidad de cabañas, salones y otros recursos leída de calendarios iCal
 (Google Calendar, Booking, Airbnb). La web muestra días libres y ocupados y arma la consulta por WhatsApp.
@@ -41,6 +41,9 @@ Solo lectura: no toma reservas ni cobra.
 * Solo fechas: ni precios, ni datos de huéspedes, ni pagos.
 
 == Cambios ==
+0.1.6
+* Panel: la columna del domingo ya no se sale de la tarjeta en celulares angostos; título de «Calendarios que se leen» más chico.
+
 0.1.5
 * Sección «Disponibilidad» en Liquen Panel (con Liquen Panel 1.1.0 o más nuevo): desde el celular se ve cada cabaña
   o salón con su mes, si sus calendarios se leen bien y el botón «Actualizar ahora». Solo para editores y administradores.

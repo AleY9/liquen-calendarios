@@ -2,7 +2,7 @@
 .lc-p-estado { margin: 0; font-size: 15px; font-weight: 600; }
 .lc-p-ok { color: var(--lp-principal); }
 .lc-p-mal { color: var(--lp-error); }
-.lc-p-recurso h2 { margin: 0; font-size: 20px; }
+.lc-p-recurso h2, .lc-p-fuentes-card h2 { margin: 0; font-size: 20px; }
 .lc-p-actualizar { margin: 0; display: flex; }
 .lc-p-actualizar .lp-btn { flex: 1; }
 .lc-p-fuentes { margin: 0; padding-left: 20px; display: flex; flex-direction: column; gap: 6px; }
@@ -10,11 +10,11 @@
 
 .lc-p-mes { max-width: 420px; width: 100%; margin: 0 auto; }
 .lc-p-mes-titulo { font-weight: 700; text-align: center; margin-bottom: 6px; }
-.lc-p-grilla { display: grid; grid-template-columns: repeat(7, 1fr); gap: 3px; }
+.lc-p-grilla { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 3px; }
 .lc-p-dsem { text-align: center; font-size: 12px; opacity: .6; padding: 2px 0; }
 .lc-p-dia {
 	display: flex; align-items: center; justify-content: center;
-	aspect-ratio: 1 / 1; min-height: 34px;
+	aspect-ratio: 1 / 1; min-width: 0;
 	border-radius: 8px; font-size: 15px;
 	border: 1px solid color-mix(in srgb, var(--lp-texto) 15%, transparent);
 }

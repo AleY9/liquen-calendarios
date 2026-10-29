@@ -2,7 +2,7 @@
 /**
  * Plugin Name:       Liquen Calendarios
  * Description:       Disponibilidad de cabañas, salones y otros recursos leída de calendarios iCal (Google Calendar, Booking, Airbnb). Muestra días libres y ocupados en la web y arma la consulta por WhatsApp.
- * Version:           0.1.5
+ * Version:           0.1.6
  * Requires at least: 6.4
  * Requires PHP:      8.0
  * Author:            Liquen Web
@@ -17,7 +17,7 @@
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'LC_VERSION', '0.1.5' );
+define( 'LC_VERSION', '0.1.6' );
 define( 'LC_DB_VERSION', '1' );
 define( 'LC_FILE', __FILE__ );
 define( 'LC_DIR', plugin_dir_path( __FILE__ ) );
