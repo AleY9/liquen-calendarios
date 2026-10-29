@@ -70,6 +70,7 @@ function lc_pantalla_ajustes() {
 		<?php if ( isset( $_GET['lc_leido'] ) ) : // phpcs:ignore ?>
 			<div class="notice notice-success is-dismissible"><p>Calendarios leídos.</p></div>
 		<?php endif; ?>
+		<?php lc_que_hace(); ?>
 		<nav class="nav-tab-wrapper" style="margin-bottom:16px">
 			<?php foreach ( $pestanas as $k => $txt ) : ?>
 				<a class="nav-tab <?php echo $tab === $k ? 'nav-tab-active' : ''; ?>" href="<?php echo esc_url( admin_url( 'options-general.php?page=liquen-calendarios&tab=' . $k ) ); ?>"><?php echo esc_html( $txt ); ?></a>
@@ -161,7 +162,7 @@ function lc_tab_ajustes() {
 	<p><strong>Ficha</strong> (plantilla de la cabaña o del salón, con el elemento Shortcode de Bricks): <code>[liquen_calendario]</code></p>
 	<p><strong>Página general</strong>: <code>[liquen_disponibilidad]</code> — opcional <code>tipos="alojamiento"</code> o <code>ids="12,15"</code>.</p>
 	<p><strong>Lectura automática</strong> cada 30 min. Para que corra aunque nadie visite el sitio, en cPanel → Tareas Cron, cada 30 min:<br>
-		<code>wget -q -O - <?php echo esc_html( site_url( 'wp-cron.php?doing_wp_cron' ) ); ?> &gt;/dev/null 2&gt;&amp;1</code></p>
+		<code><?php echo esc_html( lc_comando_cron() ); ?></code></p>
 	<?php
 }
 
@@ -501,3 +502,14 @@ add_action( 'admin_notices', function () {
 		);
 	}
 } );
+
+// Qué hace y qué no hace el plugin, a la vista en Ajustes.
+function lc_que_hace() {
+	?>
+	<div class="notice notice-info inline" style="margin:12px 0">
+		<p><strong>Qué hace:</strong> lee los calendarios de Booking, Airbnb y Google (enlaces iCal) cada 30 min, muestra en la web los días libres y ocupados de cada cabaña o salón, y arma la consulta por WhatsApp con las fechas elegidas.<?php echo function_exists( 'lp_registrar_modulo' ) ? ' En Liquen Panel, la sección «Disponibilidad» muestra lo mismo desde el celular.' : ''; ?></p>
+		<p><strong>Qué no hace:</strong> no marca reservas ni bloquea fechas en Booking, Airbnb o Google (eso se hace en cada plataforma; en Booking, desde el celular con la app Pulse), no cobra y no guarda datos de huéspedes.</p>
+		<p>Integraciones en los dos sentidos (marcar reservas desde el panel que lleguen a Booking y Airbnb, channel managers, pagos) se pueden desarrollar a pedido.</p>
+	</div>
+	<?php
+}

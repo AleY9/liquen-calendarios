@@ -1,5 +1,5 @@
 === Liquen Calendarios ===
-Versión: 0.1.4 · Requiere: WordPress 6.4+, PHP 8.0+
+Versión: 0.1.5 · Requiere: WordPress 6.4+, PHP 8.0+
 
 Disponibilidad de cabañas, salones y otros recursos leída de calendarios iCal
 (Google Calendar, Booking, Airbnb). La web muestra días libres y ocupados y arma la consulta por WhatsApp.
@@ -18,8 +18,8 @@ Solo lectura: no toma reservas ni cobra.
      cuando el día que se van no se puede alquilar. En Google, sin marcar.
 5. Plantilla de la ficha (Bricks → elemento Shortcode): [liquen_calendario]
 6. Página general: [liquen_disponibilidad] (opcional tipos="alojamiento" o ids="12,15").
-7. cPanel → Tareas programadas, cada 30 min:
-   wget -q -O - https://SITIO/wp-cron.php?doing_wp_cron >/dev/null 2>&1
+7. cPanel → Tareas programadas, cada 30 min (la línea exacta está en Ajustes → Liquen Calendarios):
+   cd /home/USUARIO/CARPETA-DEL-SITIO && /usr/local/bin/php wp-cron.php > /dev/null 2>&1
 8. Pestaña «Diagnóstico»: lista de chequeo con todo lo que está bien, lo que conviene revisar y lo que hay
    que arreglar, con la solución paso a paso. Los problemas de cada cabaña también aparecen en su caja «Calendario».
 
@@ -41,6 +41,13 @@ Solo lectura: no toma reservas ni cobra.
 * Solo fechas: ni precios, ni datos de huéspedes, ni pagos.
 
 == Cambios ==
+0.1.5
+* Sección «Disponibilidad» en Liquen Panel (con Liquen Panel 1.1.0 o más nuevo): desde el celular se ve cada cabaña
+  o salón con su mes, si sus calendarios se leen bien y el botón «Actualizar ahora». Solo para editores y administradores.
+  Recordatorio dentro de la sección: las reservas se cierran en Booking (app Pulse) o en Google; el panel no marca fechas.
+* Ajustes: recuadro «Qué hace / Qué no hace».
+* La tarea programada recomendada usa PHP directo en la carpeta del sitio (el wget fallaba en silencio en algunos hostings).
+
 0.1.4
 * Guía destacada arriba del calendario, que cambia en cada paso: «Tocá el día de llegada y el de salida. Las fechas
   se envían en el mensaje de WhatsApp» → «Ahora tocá el día de salida» → «Listo: tocá … para enviar las fechas».

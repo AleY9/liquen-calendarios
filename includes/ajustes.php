@@ -55,3 +55,9 @@ function lc_zona() {
 function lc_hoy() {
 	return ( new DateTimeImmutable( 'now', lc_zona() ) )->format( 'Y-m-d' );
 }
+
+// Comando de la tarea programada del cPanel: PHP directo en la carpeta del sitio.
+// (Con CloudLinux, /usr/local/bin/php usa la versión elegida en «Select PHP Version».)
+function lc_comando_cron() {
+	return 'cd ' . untrailingslashit( ABSPATH ) . ' && /usr/local/bin/php wp-cron.php > /dev/null 2>&1';
+}

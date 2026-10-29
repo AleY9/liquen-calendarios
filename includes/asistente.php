@@ -365,7 +365,8 @@ function lc_ayudas(): array {
 			'pasos'  => array(
 				'cPanel → «Tareas Cron» (Cron Jobs).',
 				'Configuración común: «Dos veces por hora» (*/30).',
-				'Comando: wget -q -O - ' . site_url( 'wp-cron.php?doing_wp_cron' ) . ' >/dev/null 2>&1',
+				'Comando: ' . lc_comando_cron(),
+				'Si el hosting no tiene PHP en esa ruta, usá: wget -q -O - ' . site_url( 'wp-cron.php?doing_wp_cron' ) . ' >/dev/null 2>&1',
 				'«Añadir nueva tarea cron».',
 			),
 		),
