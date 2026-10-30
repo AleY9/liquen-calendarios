@@ -18,6 +18,14 @@ function lc_ajustes_por_defecto() {
 		'txt_elegir'      => 'Tocá el día de llegada y el de salida. Las fechas se envían en el mensaje de WhatsApp.',
 		'color_acento'    => '#2f6b4f',
 		'color_ocupado'   => '#d9d4cc',
+		// Calendario de actividades (vacío = apagado). Nombres de campos del estándar Liquen.
+		'act_tipo'        => '',
+		'act_inicio'      => 'fecha_actividad',
+		'act_fin'         => 'fecha_actividad_fin',
+		'act_salon'       => 'usa_salon',
+		'act_ocultar'     => 'ocultar_calendario',
+		'act_etiqueta'    => 'tipo_de_actividad',
+		'txt_agenda_nada' => 'No hay actividades programadas este mes.',
 	);
 }
 

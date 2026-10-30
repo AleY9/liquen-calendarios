@@ -43,6 +43,14 @@ function lc_limpiar_ajustes( $in ) {
 		$v         = sanitize_text_field( (string) ( $in[ $k ] ?? '' ) );
 		$out[ $k ] = '' !== $v ? $v : $def[ $k ];
 	}
+	$out['act_tipo'] = sanitize_key( (string) ( $in['act_tipo'] ?? '' ) );
+	$out['act_tipo'] = post_type_exists( $out['act_tipo'] ) ? $out['act_tipo'] : '';
+	foreach ( array( 'act_inicio', 'act_fin', 'act_salon', 'act_ocultar', 'act_etiqueta' ) as $k ) {
+		// Nombre de campo de ACF: letras, números y guion bajo. Vacío = no se usa.
+		$out[ $k ] = preg_replace( '/[^a-z0-9_]/', '', strtolower( (string) ( $in[ $k ] ?? $def[ $k ] ) ) );
+	}
+	$v                      = sanitize_text_field( (string) ( $in['txt_agenda_nada'] ?? '' ) );
+	$out['txt_agenda_nada'] = '' !== $v ? $v : $def['txt_agenda_nada'];
 	foreach ( array( 'color_acento', 'color_ocupado' ) as $k ) {
 		$out[ $k ] = sanitize_hex_color( (string) ( $in[ $k ] ?? '' ) ) ?: $def[ $k ];
 	}
@@ -154,13 +162,61 @@ function lc_tab_ajustes() {
 				</td>
 			</tr>
 		</table>
+
+		<h2 id="lc-actividades" style="margin-top:28px">Calendario de actividades</h2>
+		<p>Muestra en la web un calendario con las actividades publicadas, usando sus fechas. No hace falta armar ningún calendario en Google: lo que se publica en el panel aparece solo.</p>
+		<table class="form-table" role="presentation">
+			<tr>
+				<th scope="row"><label for="lc-act-tipo">Tipo de las actividades</label></th>
+				<td>
+					<select id="lc-act-tipo" name="lc_ajustes[act_tipo]">
+						<option value="">— apagado —</option>
+						<?php foreach ( $tipos as $t ) : ?>
+							<option value="<?php echo esc_attr( $t->name ); ?>" <?php selected( $a['act_tipo'], $t->name ); ?>><?php echo esc_html( $t->labels->name ); ?> (<?php echo esc_html( $t->name ); ?>)</option>
+						<?php endforeach; ?>
+					</select>
+				</td>
+			</tr>
+			<tr>
+				<th scope="row">Campos de ACF</th>
+				<td>
+					<p><label>Fecha de inicio <input type="text" name="lc_ajustes[act_inicio]" value="<?php echo esc_attr( $a['act_inicio'] ); ?>"></label>
+					<label style="margin-left:12px">Fecha de fin <input type="text" name="lc_ajustes[act_fin]" value="<?php echo esc_attr( $a['act_fin'] ); ?>"></label></p>
+					<p><label>Casilla «Usa el salón» <input type="text" name="lc_ajustes[act_salon]" value="<?php echo esc_attr( $a['act_salon'] ); ?>"></label>
+					<label style="margin-left:12px">Casilla «No mostrar en el calendario» <input type="text" name="lc_ajustes[act_ocultar]" value="<?php echo esc_attr( $a['act_ocultar'] ); ?>"></label></p>
+					<p><label>Tipo de actividad (etiqueta) <input type="text" name="lc_ajustes[act_etiqueta]" value="<?php echo esc_attr( $a['act_etiqueta'] ); ?>"></label></p>
+					<p class="description">Nombres de los campos (no las etiquetas), como están en ACF. Las casillas son campos «Verdadero / Falso» en el grupo de las actividades; para cargarlas desde el celular, tildalas en Liquen Panel → Contenidos. Un campo vacío no se usa. La pestaña Diagnóstico avisa si falta alguno.</p>
+				</td>
+			</tr>
+			<tr>
+				<th scope="row"><label for="lc-agenda-nada">Mes sin actividades</label></th>
+				<td><input id="lc-agenda-nada" type="text" name="lc_ajustes[txt_agenda_nada]" value="<?php echo esc_attr( $a['txt_agenda_nada'] ); ?>" class="large-text"></td>
+			</tr>
+		</table>
 		<?php submit_button(); ?>
 	</form>
+
+	<?php if ( lc_act_activa() ) : ?>
+		<h3>Verlo en Google Calendar del celular</h3>
+		<p>Enlace secreto de suscripción (incluye también las actividades que no se muestran en la web):<br>
+			<input type="text" readonly class="large-text code" value="<?php echo esc_attr( lc_ical_url() ); ?>" onclick="this.select()"></p>
+		<ol>
+			<?php foreach ( lc_act_pasos_google() as $p ) : ?><li><?php echo esc_html( $p ); ?></li><?php endforeach; ?>
+		</ol>
+		<p class="description"><?php echo esc_html( lc_act_nota_demora() ); ?></p>
+		<form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>" onsubmit="return confirm('El enlace actual deja de funcionar y hay que volver a agregarlo en Google Calendar. ¿Seguir?');">
+			<input type="hidden" name="action" value="lc_nueva_clave">
+			<?php wp_nonce_field( 'lc_nueva_clave' ); ?>
+			<?php submit_button( 'Cambiar el enlace', 'secondary', 'submit', false ); ?>
+			<span class="description">Solo si el enlace se compartió con alguien que no debía.</span>
+		</form>
+	<?php endif; ?>
 
 	<hr>
 	<h2>En la web</h2>
 	<p><strong>Ficha</strong> (plantilla de la cabaña o del salón, con el elemento Shortcode de Bricks): <code>[liquen_calendario]</code></p>
 	<p><strong>Página general</strong>: <code>[liquen_disponibilidad]</code> — opcional <code>tipos="alojamiento"</code> o <code>ids="12,15"</code>.</p>
+	<p><strong>Calendario de actividades</strong> (página o sección con el elemento Shortcode de Bricks): <code>[liquen_agenda]</code></p>
 	<p><strong>Lectura automática</strong> cada 30 min. Para que corra aunque nadie visite el sitio, en cPanel → Tareas Cron, cada 30 min:<br>
 		<code><?php echo esc_html( lc_comando_cron() ); ?></code></p>
 	<?php
@@ -200,6 +256,16 @@ add_action( 'admin_post_lc_leer_todo', function () {
 	delete_transient( 'lc_leyendo' );
 	lc_sincronizar_todo();
 	wp_safe_redirect( admin_url( 'options-general.php?page=liquen-calendarios&tab=diagnostico&lc_leido=1' ) );
+	exit;
+} );
+
+add_action( 'admin_post_lc_nueva_clave', function () {
+	if ( ! current_user_can( 'manage_options' ) ) {
+		wp_die( 'Sin permiso.' );
+	}
+	check_admin_referer( 'lc_nueva_clave' );
+	lc_ical_clave( true );
+	wp_safe_redirect( admin_url( 'options-general.php?page=liquen-calendarios&tab=ajustes#lc-actividades' ) );
 	exit;
 } );
 
@@ -279,6 +345,13 @@ function lc_caja( WP_Post $post ) {
 		</label>
 		<span class="description">Ocupa cada día que toca una reserva.</span>
 	</p>
+	<?php if ( lc_act_activa() && '' !== (string) lc_ajuste( 'act_salon' ) ) : ?>
+		<p>
+			<label><input type="checkbox" name="lc_actividades" value="1" <?php checked( (bool) get_post_meta( $post->ID, '_lc_actividades', true ) ); ?>>
+			<strong>Sumar las actividades que usan este espacio</strong></label><br>
+			<span class="description">Los días de las actividades publicadas con «Usa el salón» marcado figuran ocupados acá, al instante. Para un solo salón: marcala solo en su ficha.</span>
+		</p>
+	<?php endif; ?>
 
 	<table class="widefat lc-fuentes" style="margin:8px 0">
 		<thead><tr><th style="width:18%">Nombre</th><th>Dirección iCal</th><th style="width:16%">Día de salida</th><th style="width:22%">Estado</th><th style="width:6%">Quitar</th></tr></thead>
@@ -444,6 +517,20 @@ add_action( 'save_post', function ( $post_id, $post ) {
 	} else {
 		delete_post_meta( $post_id, '_lc_fuentes' );
 		delete_post_meta( $post_id, '_lc_estado' );
+	}
+
+	// Actividades que usan este espacio (solo si la casilla se mostró).
+	if ( lc_act_activa() && '' !== (string) lc_ajuste( 'act_salon' ) ) {
+		$antes_act = (bool) get_post_meta( $post_id, '_lc_actividades', true );
+		$ahora_act = ! empty( $_POST['lc_actividades'] );
+		if ( $ahora_act ) {
+			update_post_meta( $post_id, '_lc_actividades', '1' );
+		} else {
+			delete_post_meta( $post_id, '_lc_actividades' );
+		}
+		if ( $antes_act !== $ahora_act ) {
+			lc_sincronizar_actividades_recurso( $post_id );
+		}
 	}
 
 	// Se vuelve a leer si cambió algo de las fuentes o si se pidió.

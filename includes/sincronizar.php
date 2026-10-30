@@ -45,6 +45,7 @@ function lc_sincronizar_recurso( int $recurso_id ): array {
 	$fuentes = lc_fuentes( $recurso_id );
 	$estado  = lc_estado( $recurso_id );
 	$ids     = array_column( $fuentes, 'id' );
+	$ids[]   = 'actividades'; // Días de las actividades que usan este espacio (se arman aparte, sin descargar nada).
 
 	// Lo que quedó de fuentes borradas, fuera.
 	lc_borrar_ocupaciones( $recurso_id, $ids );
@@ -80,6 +81,8 @@ function lc_sincronizar_recurso( int $recurso_id ): array {
 		}
 		$estado[ $f['id'] ] = $e;
 	}
+
+	lc_sincronizar_actividades_recurso( $recurso_id );
 
 	update_post_meta( $recurso_id, '_lc_estado', $estado );
 	return $estado;

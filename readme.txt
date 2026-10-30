@@ -1,5 +1,5 @@
 === Liquen Calendarios ===
-Versión: 0.1.6 · Requiere: WordPress 6.4+, PHP 8.0+
+Versión: 0.2.0 · Requiere: WordPress 6.4+, PHP 8.0+
 
 Disponibilidad de cabañas, salones y otros recursos leída de calendarios iCal
 (Google Calendar, Booking, Airbnb). La web muestra días libres y ocupados y arma la consulta por WhatsApp.
@@ -20,7 +20,11 @@ Solo lectura: no toma reservas ni cobra.
 6. Página general: [liquen_disponibilidad] (opcional tipos="alojamiento" o ids="12,15").
 7. cPanel → Tareas programadas, cada 30 min (la línea exacta está en Ajustes → Liquen Calendarios):
    cd /home/USUARIO/CARPETA-DEL-SITIO && /usr/local/bin/php wp-cron.php > /dev/null 2>&1
-8. Pestaña «Diagnóstico»: lista de chequeo con todo lo que está bien, lo que conviene revisar y lo que hay
+8. Calendario de actividades (opcional): Ajustes → «Calendario de actividades» → elegir el tipo (ej. Actividades).
+   Campos «Verdadero / Falso» en ACF para las actividades: usa_salon («Usa el salón») y ocultar_calendario
+   («No mostrar en el calendario»). En la ficha del salón, caja «Calendario» → «Sumar las actividades que usan
+   este espacio». En la web: [liquen_agenda].
+9. Pestaña «Diagnóstico»: lista de chequeo con todo lo que está bien, lo que conviene revisar y lo que hay
    que arreglar, con la solución paso a paso. Los problemas de cada cabaña también aparecen en su caja «Calendario».
 
 == Cómo funciona ==
@@ -36,11 +40,32 @@ Solo lectura: no toma reservas ni cobra.
   páginas se pueden guardar en caché (LiteSpeed) sin mostrar días viejos.
 * Si una fuente no se puede leer, se conservan los últimos datos y aparece un aviso en wp-admin a las 6 h.
 
+== Calendario de actividades ==
+* Las fechas salen de las actividades publicadas (fecha de inicio y de fin): no se arma ningún calendario en Google.
+  Lo que se publica en el panel aparece al instante.
+* [liquen_agenda]: mes en cuadrícula con los días que tienen actividades y la lista por día, con enlace a cada una.
+  Las de varios días aparecen en todos sus días. Llega por la API (/wp-json/liquen-calendarios/v1/actividades).
+* «No mostrar en el calendario»: la actividad no aparece en la agenda de la web (sí en el enlace de Google).
+* «Usa el salón»: el salón figura ocupado esos días en su disponibilidad, al instante, sumado a su calendario de Google.
+* Enlace iCal secreto para suscribirse desde Google Calendar (Ajustes y sección «Disponibilidad» del panel).
+  Google lo vuelve a leer cada varias horas (hasta un día): la que vale es la web.
+
 == Límites ==
 * No es instantáneo: la web se actualiza cada 30 min; Booking y Airbnb también tardan en leer.
 * Solo fechas: ni precios, ni datos de huéspedes, ni pagos.
 
 == Cambios ==
+0.2.0
+* Calendario de actividades: [liquen_agenda] en la web con las actividades publicadas, tomadas de sus fechas.
+  Casilla «No mostrar en el calendario» por actividad.
+* «Usa el salón»: las actividades marcadas ocupan el salón en su disponibilidad (casilla «Sumar las actividades que
+  usan este espacio» en la caja «Calendario» de la ficha). Se actualiza al guardar la actividad.
+* Enlace iCal secreto de las actividades para Google Calendar, con los pasos y el aviso de demoras, en Ajustes y en
+  la sección «Disponibilidad» del panel. Botón para cambiar el enlace.
+* Diagnóstico: grupo «Calendario de actividades» (campos de ACF, actividades próximas, [liquen_agenda] en la web,
+  salón que suma las actividades).
+* Apagado por defecto: en sitios sin actividades no cambia nada.
+
 0.1.6
 * Panel: la columna del domingo ya no se sale de la tarjeta en celulares angostos; título de «Calendarios que se leen» más chico.
 

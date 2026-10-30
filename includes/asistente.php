@@ -485,6 +485,8 @@ function lc_diagnostico(): array {
 		$add( $G, 'ojo', 'No hay página general con todas las cabañas (opcional): [liquen_disponibilidad].', 'shortcode' );
 	}
 
+	lc_act_diagnostico( $add, $buscar );
+
 	if ( ! $tipos ) {
 		return $items;
 	}

@@ -29,3 +29,10 @@
 .lc-p-leyenda span { display: inline-flex; align-items: center; gap: 6px; }
 .lc-p-muestra { display: inline-block; width: 16px; height: 16px; border-radius: 4px; border: 1px solid color-mix(in srgb, var(--lp-texto) 15%, transparent); }
 .lc-p-muestra.lc-p-ocupado { border-color: transparent; }
+
+/* Calendario de actividades (0.2.0) */
+.lc-p-agenda h2 { margin: 0; font-size: 20px; }
+.lc-p-agenda p { margin: 0; }
+.lc-p-google summary { cursor: pointer; padding: 6px 0; }
+.lc-p-google ol { margin: 8px 0; padding-left: 20px; display: flex; flex-direction: column; gap: 4px; }
+.lc-p-enlace { width: 100%; box-sizing: border-box; font-size: 13px; padding: 8px; margin: 6px 0; }

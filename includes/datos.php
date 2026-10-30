@@ -58,9 +58,14 @@ function lc_estado( int $recurso_id ): array {
 	return is_array( $e ) ? $e : array();
 }
 
+// Tiene calendario: fuentes iCal o actividades que usan este espacio.
+function lc_tiene_calendario( int $id ): bool {
+	return (bool) lc_fuentes( $id ) || lc_suma_actividades( $id );
+}
+
 function lc_es_recurso( $post ): bool {
 	$post = get_post( $post );
-	return $post && in_array( $post->post_type, lc_tipos_habilitados(), true ) && lc_fuentes( $post->ID );
+	return $post && in_array( $post->post_type, lc_tipos_habilitados(), true ) && lc_tiene_calendario( $post->ID );
 }
 
 /**
@@ -80,8 +85,13 @@ function lc_recursos( array $args = array() ): array {
 		'fields'         => 'ids',
 		'orderby'        => array( 'menu_order' => 'ASC', 'title' => 'ASC' ),
 		'meta_query'     => array(
+			'relation' => 'OR',
 			array(
 				'key'     => '_lc_fuentes',
+				'compare' => 'EXISTS',
+			),
+			array(
+				'key'     => '_lc_actividades',
 				'compare' => 'EXISTS',
 			),
 		),
@@ -91,9 +101,7 @@ function lc_recursos( array $args = array() ): array {
 		$q['post__in'] = array_map( 'intval', (array) $args['ids'] );
 		$q['orderby']  = 'post__in';
 	}
-	return array_values( array_filter( get_posts( $q ), function ( $id ) {
-		return (bool) lc_fuentes( $id );
-	} ) );
+	return array_values( array_filter( get_posts( $q ), 'lc_tiene_calendario' ) );
 }
 
 /* ------------------------------------------------------------------ */

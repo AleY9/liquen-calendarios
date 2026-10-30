@@ -54,6 +54,9 @@ function lc_panel_estado( int $id ): array {
 	if ( $errores ) {
 		return array( 'ok' => false, 'texto' => implode( ' · ', $errores ) );
 	}
+	if ( ! lc_fuentes( $id ) ) {
+		return array( 'ok' => true, 'texto' => 'Según las actividades de la web' );
+	}
 	return array( 'ok' => true, 'texto' => 'Al día · leído hace ' . human_time_diff( $ultimo ) );
 }
 
@@ -113,7 +116,35 @@ function lc_panel_vista_lista(): string {
 		$h  .= '<a class="lp-btn lp-btn-sec" href="' . esc_url( lp_modulo_url( 'disponibilidad', array( 'v' => 'recurso', 'id' => $id ) ) ) . '">Ver los próximos meses</a>';
 		$h  .= '</section>';
 	}
-	return $h . lc_panel_recordatorio();
+	return $h . lc_panel_agenda() . lc_panel_recordatorio();
+}
+
+// Calendario de actividades: enlace para Google Calendar y cómo funciona (solo si está prendido).
+function lc_panel_agenda(): string {
+	if ( ! lc_act_activa() ) {
+		return '';
+	}
+	$h  = '<section class="lp-card lc-p-agenda">';
+	$h .= '<h2>Calendario de actividades</h2>';
+	$h .= '<p>Las actividades publicadas aparecen solas en el calendario de la web, en todos sus días.';
+	if ( '' !== (string) lc_ajuste( 'act_ocultar' ) ) {
+		$h .= ' Para que una no aparezca, marcá «No mostrar en el calendario» en la actividad.';
+	}
+	if ( lc_recursos_con_actividades() ) {
+		$h .= ' Si marcás «Usa el salón», el salón figura ocupado esos días.';
+	}
+	$h .= '</p>';
+	$h .= '<details class="lc-p-google"><summary><strong>Verlas en Google Calendar del celular</strong></summary>';
+	$h .= '<p>Enlace secreto (no lo publiques):</p>';
+	$h .= '<input type="text" readonly class="lc-p-enlace" value="' . esc_attr( lc_ical_url() ) . '" onclick="this.select()">';
+	$h .= '<ol>';
+	foreach ( lc_act_pasos_google() as $p ) {
+		$h .= '<li>' . lp_e( $p ) . '</li>';
+	}
+	$h .= '</ol>';
+	$h .= '<p class="lp-s">' . lp_e( lc_act_nota_demora() ) . '</p>';
+	$h .= '</details>';
+	return $h . '</section>';
 }
 
 function lc_panel_vista_recurso( int $id ): string {
