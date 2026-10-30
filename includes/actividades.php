@@ -267,7 +267,12 @@ add_action( 'init', function () {
 	add_shortcode( 'liquen_agenda', 'lc_sc_agenda' );
 } );
 
-function lc_sc_agenda() {
+/**
+ * [liquen_agenda] — opcional desplegable="Ver calendario de actividades" (queda cerrado hasta tocarlo)
+ * y abierto="1" para que arranque abierto.
+ */
+function lc_sc_agenda( $atts = array() ) {
+	$atts = shortcode_atts( array( 'desplegable' => '', 'abierto' => '' ), $atts, 'liquen_agenda' );
 	if ( ! lc_act_activa() ) {
 		return current_user_can( 'edit_posts' ) ? '<p class="lc-aviso">Liquen Calendarios: el calendario de actividades está apagado (Ajustes → Liquen Calendarios → Ajustes → «Calendario de actividades»).</p>' : '';
 	}
@@ -291,7 +296,11 @@ function lc_sc_agenda() {
 			),
 		)
 	);
-	return '<div class="lc-agenda"><p class="lc-cargando">Cargando actividades…</p></div>';
+	$html = '<div class="lc-agenda"><p class="lc-cargando">Cargando actividades…</p></div>';
+	if ( '' !== trim( (string) $atts['desplegable'] ) ) {
+		$html = '<details class="lc-ag-desplegable"' . ( $atts['abierto'] ? ' open' : '' ) . '><summary>' . esc_html( $atts['desplegable'] ) . '</summary>' . $html . '</details>';
+	}
+	return $html;
 }
 
 /* ------------------------------------------------------------------ */

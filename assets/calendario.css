@@ -408,3 +408,38 @@ button.lc-ag-dia { cursor: pointer; }
 .lc-ag-dia-lista:target .lc-ag-fecha,
 .lc-ag-marcado .lc-ag-fecha { color: var(--lc-acento); }
 .lc-ag-nada { margin: 0; color: var(--lc-tenue); }
+
+/* [liquen_agenda desplegable="…"] */
+.lc-ag-desplegable {
+	border: 1px solid color-mix(in srgb, currentColor 18%, transparent);
+	border-radius: 12px;
+	padding: 0 18px;
+}
+.lc-ag-desplegable[open] { padding-bottom: 20px; }
+.lc-ag-desplegable > summary {
+	cursor: pointer;
+	list-style: none;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 12px;
+	padding: 14px 0;
+	font-weight: 600;
+	color: var(--lc-acento);
+}
+.lc-ag-desplegable > summary::-webkit-details-marker { display: none; }
+.lc-ag-desplegable > summary::after {
+	content: "";
+	flex: none;
+	width: 9px;
+	height: 9px;
+	border-right: 2px solid currentColor;
+	border-bottom: 2px solid currentColor;
+	transform: rotate(45deg);
+	transition: transform .2s ease;
+}
+.lc-ag-desplegable[open] > summary {
+	border-bottom: 1px solid color-mix(in srgb, currentColor 18%, transparent);
+	margin-bottom: 16px;
+}
+.lc-ag-desplegable[open] > summary::after { transform: rotate(-135deg); }

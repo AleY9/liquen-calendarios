@@ -43,7 +43,7 @@ Solo lectura: no toma reservas ni cobra.
 == Calendario de actividades ==
 * Las fechas salen de las actividades publicadas (fecha de inicio y de fin): no se arma ningún calendario en Google.
   Lo que se publica en el panel aparece al instante.
-* [liquen_agenda]: mes en cuadrícula con los días que tienen actividades y la lista por día, con enlace a cada una.
+* [liquen_agenda] (opcional desplegable="Ver calendario de actividades"): mes en cuadrícula con los días que tienen actividades y la lista por día, con enlace a cada una.
   Las de varios días aparecen en todos sus días. Llega por la API (/wp-json/liquen-calendarios/v1/actividades).
 * «No mostrar en el calendario»: la actividad no aparece en la agenda de la web (sí en el enlace de Google).
 * «Usa el salón»: el salón figura ocupado esos días en su disponibilidad, al instante, sumado a su calendario de Google.
