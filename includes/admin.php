@@ -264,7 +264,7 @@ add_action( 'admin_post_lc_nueva_clave', function () {
 		wp_die( 'Sin permiso.' );
 	}
 	check_admin_referer( 'lc_nueva_clave' );
-	lc_ical_clave( true );
+	lc_agenda_clave( true );
 	wp_safe_redirect( admin_url( 'options-general.php?page=liquen-calendarios&tab=ajustes#lc-actividades' ) );
 	exit;
 } );

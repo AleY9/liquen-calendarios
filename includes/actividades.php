@@ -298,7 +298,7 @@ function lc_sc_agenda() {
 /* iCal de suscripción (Google Calendar del celular)                   */
 /* ------------------------------------------------------------------ */
 
-function lc_ical_clave( bool $nueva = false ): string {
+function lc_agenda_clave( bool $nueva = false ): string {
 	$c = (string) get_option( 'lc_ical_clave', '' );
 	if ( '' === $c || $nueva ) {
 		$c = strtolower( wp_generate_password( 24, false ) );
@@ -308,7 +308,7 @@ function lc_ical_clave( bool $nueva = false ): string {
 }
 
 function lc_ical_url(): string {
-	return add_query_arg( 'lc_agenda_ical', lc_ical_clave(), home_url( '/' ) );
+	return add_query_arg( 'lc_agenda_ical', lc_agenda_clave(), home_url( '/' ) );
 }
 
 // Escapa un texto para iCal y corta las líneas largas (75 bytes).
@@ -368,7 +368,7 @@ add_action( 'init', function () {
 		return;
 	}
 	$k = sanitize_key( wp_unslash( $_GET['lc_agenda_ical'] ) ); // phpcs:ignore WordPress.Security.NonceVerification
-	if ( ! lc_act_activa() || ! hash_equals( lc_ical_clave(), $k ) ) {
+	if ( ! lc_act_activa() || ! hash_equals( lc_agenda_clave(), $k ) ) {
 		status_header( 404 );
 		exit;
 	}
