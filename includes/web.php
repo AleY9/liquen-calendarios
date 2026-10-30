@@ -20,7 +20,7 @@ function lc_encolar() {
 	}
 	$a = lc_ajustes();
 
-	wp_enqueue_style( 'liquen-calendarios', LC_URL . 'assets/calendario.css', array(), LC_VERSION );
+	wp_enqueue_style( 'liquen-calendarios', LC_URL . 'assets/calendario.css', array(), LC_VERSION . '.' . (int) @filemtime( LC_DIR . 'assets/calendario.css' ) );
 	wp_add_inline_style( 'liquen-calendarios', sprintf( ':root{--lc-acento:%s;--lc-ocupado:%s}', $a['color_acento'], $a['color_ocupado'] ) );
 
 	wp_enqueue_script( 'liquen-calendarios', LC_URL . 'assets/calendario.js', array(), LC_VERSION, true );

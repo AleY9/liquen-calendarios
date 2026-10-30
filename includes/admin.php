@@ -45,7 +45,7 @@ function lc_limpiar_ajustes( $in ) {
 	}
 	$out['act_tipo'] = sanitize_key( (string) ( $in['act_tipo'] ?? '' ) );
 	$out['act_tipo'] = post_type_exists( $out['act_tipo'] ) ? $out['act_tipo'] : '';
-	foreach ( array( 'act_inicio', 'act_fin', 'act_salon', 'act_ocultar', 'act_etiqueta' ) as $k ) {
+	foreach ( array( 'act_inicio', 'act_fin', 'act_salon', 'act_mostrar', 'act_etiqueta' ) as $k ) {
 		// Nombre de campo de ACF: letras, números y guion bajo. Vacío = no se usa.
 		$out[ $k ] = preg_replace( '/[^a-z0-9_]/', '', strtolower( (string) ( $in[ $k ] ?? $def[ $k ] ) ) );
 	}
@@ -183,9 +183,9 @@ function lc_tab_ajustes() {
 					<p><label>Fecha de inicio <input type="text" name="lc_ajustes[act_inicio]" value="<?php echo esc_attr( $a['act_inicio'] ); ?>"></label>
 					<label style="margin-left:12px">Fecha de fin <input type="text" name="lc_ajustes[act_fin]" value="<?php echo esc_attr( $a['act_fin'] ); ?>"></label></p>
 					<p><label>Casilla «Usa el salón» <input type="text" name="lc_ajustes[act_salon]" value="<?php echo esc_attr( $a['act_salon'] ); ?>"></label>
-					<label style="margin-left:12px">Casilla «No mostrar en el calendario» <input type="text" name="lc_ajustes[act_ocultar]" value="<?php echo esc_attr( $a['act_ocultar'] ); ?>"></label></p>
+					<label style="margin-left:12px">Casilla «Mostrar en el calendario» <input type="text" name="lc_ajustes[act_mostrar]" value="<?php echo esc_attr( $a['act_mostrar'] ); ?>"></label></p>
 					<p><label>Tipo de actividad (etiqueta) <input type="text" name="lc_ajustes[act_etiqueta]" value="<?php echo esc_attr( $a['act_etiqueta'] ); ?>"></label></p>
-					<p class="description">Nombres de los campos (no las etiquetas), como están en ACF. Las casillas son campos «Verdadero / Falso» en el grupo de las actividades; para cargarlas desde el celular, tildalas en Liquen Panel → Contenidos. Un campo vacío no se usa. La pestaña Diagnóstico avisa si falta alguno.</p>
+					<p class="description">Nombres de los campos (no las etiquetas), como están en ACF. Las casillas son campos «Verdadero / Falso» en el grupo de las actividades («Mostrar en el calendario» con valor por defecto activado: si una actividad no la tiene guardada, se muestra); para cargarlas desde el celular, tildalas en Liquen Panel → Contenidos. Un campo vacío no se usa. La pestaña Diagnóstico avisa si falta alguno.</p>
 				</td>
 			</tr>
 			<tr>

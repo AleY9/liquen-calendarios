@@ -127,8 +127,8 @@ function lc_panel_agenda(): string {
 	$h  = '<section class="lp-card lc-p-agenda">';
 	$h .= '<h2>Calendario de actividades</h2>';
 	$h .= '<p>Las actividades publicadas aparecen solas en el calendario de la web, en todos sus días.';
-	if ( '' !== (string) lc_ajuste( 'act_ocultar' ) ) {
-		$h .= ' Para que una no aparezca, marcá «No mostrar en el calendario» en la actividad.';
+	if ( '' !== (string) lc_ajuste( 'act_mostrar' ) ) {
+		$h .= ' Para que una no aparezca, desmarcá «Mostrar en el calendario» en la actividad.';
 	}
 	if ( lc_recursos_con_actividades() ) {
 		$h .= ' Si marcás «Usa el salón», el salón figura ocupado esos días.';

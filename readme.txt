@@ -21,8 +21,8 @@ Solo lectura: no toma reservas ni cobra.
 7. cPanel → Tareas programadas, cada 30 min (la línea exacta está en Ajustes → Liquen Calendarios):
    cd /home/USUARIO/CARPETA-DEL-SITIO && /usr/local/bin/php wp-cron.php > /dev/null 2>&1
 8. Calendario de actividades (opcional): Ajustes → «Calendario de actividades» → elegir el tipo (ej. Actividades).
-   Campos «Verdadero / Falso» en ACF para las actividades: usa_salon («Usa el salón») y ocultar_calendario
-   («No mostrar en el calendario»). En la ficha del salón, caja «Calendario» → «Sumar las actividades que usan
+   Campos «Verdadero / Falso» en ACF para las actividades: usa_salon («Usa el salón») y mostrar_calendario
+   («Mostrar en el calendario», valor por defecto activado). En la ficha del salón, caja «Calendario» → «Sumar las actividades que usan
    este espacio». En la web: [liquen_agenda].
 9. Pestaña «Diagnóstico»: lista de chequeo con todo lo que está bien, lo que conviene revisar y lo que hay
    que arreglar, con la solución paso a paso. Los problemas de cada cabaña también aparecen en su caja «Calendario».
@@ -45,7 +45,7 @@ Solo lectura: no toma reservas ni cobra.
   Lo que se publica en el panel aparece al instante.
 * [liquen_agenda] (opcional desplegable="Ver calendario de actividades"): mes en cuadrícula con los días que tienen actividades y la lista por día, con enlace a cada una.
   Las de varios días aparecen en todos sus días. Llega por la API (/wp-json/liquen-calendarios/v1/actividades).
-* «No mostrar en el calendario»: la actividad no aparece en la agenda de la web (sí en el enlace de Google).
+* «Mostrar en el calendario» desmarcada: la actividad no aparece en la agenda de la web (sí en el enlace de Google).
 * «Usa el salón»: el salón figura ocupado esos días en su disponibilidad, al instante, sumado a su calendario de Google.
 * Enlace iCal secreto para suscribirse desde Google Calendar (Ajustes y sección «Disponibilidad» del panel).
   Google lo vuelve a leer cada varias horas (hasta un día): la que vale es la web.
@@ -57,7 +57,7 @@ Solo lectura: no toma reservas ni cobra.
 == Cambios ==
 0.2.0
 * Calendario de actividades: [liquen_agenda] en la web con las actividades publicadas, tomadas de sus fechas.
-  Casilla «No mostrar en el calendario» por actividad.
+  Casilla «Mostrar en el calendario» por actividad (sí por defecto).
 * «Usa el salón»: las actividades marcadas ocupan el salón en su disponibilidad (casilla «Sumar las actividades que
   usan este espacio» en la caja «Calendario» de la ficha). Se actualiza al guardar la actividad.
 * Enlace iCal secreto de las actividades para Google Calendar, con los pasos y el aviso de demoras, en Ajustes y en

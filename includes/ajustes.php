@@ -23,7 +23,7 @@ function lc_ajustes_por_defecto() {
 		'act_inicio'      => 'fecha_actividad',
 		'act_fin'         => 'fecha_actividad_fin',
 		'act_salon'       => 'usa_salon',
-		'act_ocultar'     => 'ocultar_calendario',
+		'act_mostrar'     => 'mostrar_calendario',
 		'act_etiqueta'    => 'tipo_de_actividad',
 		'txt_agenda_nada' => 'No hay actividades programadas este mes.',
 	);

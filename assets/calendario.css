@@ -415,7 +415,7 @@ button.lc-ag-dia { cursor: pointer; }
 	border-radius: 12px;
 	padding: 0 18px;
 }
-.lc-ag-desplegable[open] { padding-bottom: 20px; }
+.lc-ag-desplegable[open] { padding-bottom: 24px; }
 .lc-ag-desplegable > summary {
 	cursor: pointer;
 	list-style: none;
@@ -440,6 +440,6 @@ button.lc-ag-dia { cursor: pointer; }
 }
 .lc-ag-desplegable[open] > summary {
 	border-bottom: 1px solid color-mix(in srgb, currentColor 18%, transparent);
-	margin-bottom: 16px;
+	margin-bottom: 20px;
 }
 .lc-ag-desplegable[open] > summary::after { transform: rotate(-135deg); }

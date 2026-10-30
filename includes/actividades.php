@@ -6,7 +6,7 @@
  * no hay que armar ningún calendario aparte en Google.
  *
  * - Web: [liquen_agenda] muestra el calendario del mes con las actividades (las de varios días, en todos sus días).
- * - «No mostrar en el calendario» (casilla de la actividad): no aparece en la agenda de la web.
+ * - «Mostrar en el calendario» (casilla de la actividad, sí por defecto): desmarcada, no aparece en la agenda de la web.
  * - «Usa el salón» (casilla de la actividad): el salón figura ocupado esos días, si en su caja «Calendario»
  *   está marcado «Sumar las actividades que usan este espacio».
  * - Enlace iCal secreto para suscribirse desde Google Calendar (se actualiza cuando Google lo vuelve a leer).
@@ -43,6 +43,15 @@ function lc_act_marcada( int $id, string $campo ): bool {
 	return '' !== $campo && in_array( (string) get_post_meta( $id, $campo, true ), array( '1', 'true', 'yes', 'si', 'sí' ), true );
 }
 
+// «Mostrar en el calendario» desmarcada. Sin valor guardado (actividades viejas) = se muestra.
+function lc_act_oculta( int $id ): bool {
+	$campo = (string) lc_ajuste( 'act_mostrar' );
+	if ( '' === $campo || ! metadata_exists( 'post', $id, $campo ) ) {
+		return false;
+	}
+	return in_array( (string) get_post_meta( $id, $campo, true ), array( '0', '', 'false', 'no' ), true );
+}
+
 // Texto del tipo de actividad (Senderismo, Taller…), si hay campo para eso.
 function lc_act_etiqueta( int $id ): string {
 	$campo = (string) lc_ajuste( 'act_etiqueta' );
@@ -59,7 +68,7 @@ function lc_act_etiqueta( int $id ): string {
 /**
  * Actividades publicadas que tocan el período [$desde, $hasta) (Y-m-d).
  *
- * @param array $args 'ocultas' => incluir las marcadas «No mostrar en el calendario»; 'salon' => solo las que usan el salón.
+ * @param array $args 'ocultas' => incluir las que tienen desmarcado «Mostrar en el calendario»; 'salon' => solo las que usan el salón.
  * @return array [ ['id','titulo','url','tipo','inicio','fin','oculta','salon'], ... ] ordenadas por fecha.
  */
 function lc_actividades( string $desde, string $hasta, array $args = array() ): array {
@@ -98,7 +107,7 @@ function lc_actividades( string $desde, string $hasta, array $args = array() ): 
 		if ( $fin < $desde || $ini >= $hasta ) {
 			continue;
 		}
-		$oculta = lc_act_marcada( $id, (string) lc_ajuste( 'act_ocultar' ) );
+		$oculta = lc_act_oculta( $id );
 		$salon  = lc_act_marcada( $id, (string) lc_ajuste( 'act_salon' ) );
 		if ( ( $oculta && empty( $args['ocultas'] ) ) || ( ! $salon && ! empty( $args['salon'] ) ) ) {
 			continue;
@@ -195,7 +204,7 @@ add_action( 'transition_post_status', function ( $nuevo, $viejo, $post ) {
 }, 10, 3 );
 foreach ( array( 'added_post_meta', 'updated_post_meta', 'deleted_post_meta' ) as $lc_h ) {
 	add_action( $lc_h, function ( $mid, $post_id, $clave ) {
-		$campos = array_filter( array( lc_ajuste( 'act_inicio' ), lc_ajuste( 'act_fin' ), lc_ajuste( 'act_salon' ), lc_ajuste( 'act_ocultar' ) ) );
+		$campos = array_filter( array( lc_ajuste( 'act_inicio' ), lc_ajuste( 'act_fin' ), lc_ajuste( 'act_salon' ), lc_ajuste( 'act_mostrar' ) ) );
 		if ( in_array( $clave, $campos, true ) ) {
 			lc_act_marcar_cambio( (int) $post_id );
 		}
@@ -254,8 +263,9 @@ function lc_rest_actividades( WP_REST_Request $req ) {
 		);
 		set_transient( $clave, $datos, 15 * MINUTE_IN_SECONDS );
 	}
+	// Sin caché en el navegador: un cambio en el panel se ve al recargar (el servidor guarda 15 min y se renueva con cada cambio).
 	$resp = rest_ensure_response( $datos );
-	$resp->header( 'Cache-Control', 'public, max-age=300' );
+	$resp->header( 'Cache-Control', 'no-cache' );
 	return $resp;
 }
 
@@ -278,7 +288,7 @@ function lc_sc_agenda( $atts = array() ) {
 	}
 	lc_encolar();
 	$a = lc_ajustes();
-	wp_enqueue_script( 'liquen-agenda', LC_URL . 'assets/agenda.js', array(), LC_VERSION, true );
+	wp_enqueue_script( 'liquen-agenda', LC_URL . 'assets/agenda.js', array(), LC_VERSION . '.' . (int) @filemtime( LC_DIR . 'assets/agenda.js' ), true );
 	wp_localize_script(
 		'liquen-agenda',
 		'lcAgenda',
@@ -445,7 +455,7 @@ function lc_act_diagnostico( callable $add, callable $buscar ): void {
 		'act_inicio'  => array( 'Fecha de inicio', 'mal' ),
 		'act_fin'     => array( 'Fecha de fin', 'ojo' ),
 		'act_salon'   => array( '«Usa el salón»', 'ojo' ),
-		'act_ocultar' => array( '«No mostrar en el calendario»', 'ojo' ),
+		'act_mostrar' => array( '«Mostrar en el calendario»', 'ojo' ),
 	);
 	foreach ( $campos as $k => $c ) {
 		$nombre = (string) lc_ajuste( $k );

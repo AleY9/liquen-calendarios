@@ -86,6 +86,6 @@ function lc_rest_disponibilidad( WP_REST_Request $req ) {
 	}
 
 	$resp = rest_ensure_response( $datos );
-	$resp->header( 'Cache-Control', 'public, max-age=300' );
+	$resp->header( 'Cache-Control', 'public, max-age=60' );
 	return $resp;
 }
