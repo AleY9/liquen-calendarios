@@ -416,6 +416,45 @@ function lc_tipo_fuente( string $url ): string {
 }
 
 /**
+ * ¿Es un sitio de pruebas? Mismo criterio que Liquen Panel: WordPress lo marca como
+ * staging/development/local (WP_ENVIRONMENT_TYPE), o la dirección empieza con staging., dev.,
+ * test., stage. o qa., o termina en .local, .test o .localhost. A mano: define( 'LP_ES_STAGING', true );
+ * en el wp-config.php (o false para forzar producción). Vale para todos los plugins Liquen.
+ */
+function lc_es_staging(): bool {
+	if ( defined( 'LP_ES_STAGING' ) ) {
+		return (bool) LP_ES_STAGING;
+	}
+	$es = in_array( wp_get_environment_type(), array( 'staging', 'development', 'local' ), true );
+	if ( ! $es ) {
+		$host = strtolower( (string) wp_parse_url( home_url(), PHP_URL_HOST ) );
+		$es   = (bool) preg_match( '/^(staging|stage|dev|test|qa)[.\-]|\.(local|test|localhost)$/', $host );
+	}
+	return (bool) apply_filters( 'lp_es_staging', $es );
+}
+
+// Seguridad: ejecución de PHP por MCP y de código de Bricks solo en stagings (regla de los plugins Liquen).
+function lc_seguridad_diagnostico( callable $add ): void {
+	$S        = 'Seguridad';
+	$php_mcp  = defined( 'BRICKS_ENABLE_PHP_ABILITIES' ) && BRICKS_ENABLE_PHP_ABILITIES;
+	$bricks_g = get_option( 'bricks_global_settings', array() );
+	$codigo   = is_array( $bricks_g ) && ! empty( $bricks_g['executeCodeEnabled'] );
+	if ( lc_es_staging() ) {
+		if ( $php_mcp || $codigo ) {
+			$add( $S, 'ok', 'Sitio de pruebas (staging): la ejecución de PHP por MCP o de código de Bricks está activa. Acá está bien; en producción no tiene que estar.' );
+		} else {
+			$add( $S, 'ok', 'Sitio de pruebas (staging): la ejecución de PHP por MCP y de código de Bricks están apagadas.' );
+		}
+	} elseif ( $php_mcp ) {
+		$add( $S, 'mal', 'Este sitio parece de producción y tiene activa la ejecución de PHP por MCP: cualquiera con la conexión MCP puede correr código. Sacá la línea define( \'BRICKS_ENABLE_PHP_ABILITIES\', true ); del wp-config.php' . ( $codigo ? ' y apagá Bricks → Ajustes → «Ejecución de código»' : '' ) . '. Si en realidad es un staging, agregá define( \'LP_ES_STAGING\', true ); en el wp-config.php.' );
+	} elseif ( $codigo ) {
+		$add( $S, 'ojo', 'Este sitio parece de producción y tiene habilitada Bricks → Ajustes → «Ejecución de código». Si ningún elemento de la web la usa, apagala.', null, admin_url( 'admin.php?page=bricks-settings' ) );
+	} else {
+		$add( $S, 'ok', 'Sin ejecución de PHP por MCP ni de código de Bricks.' );
+	}
+}
+
+/**
  * Lista de chequeo.
  *
  * @return array [ ['grupo', 'estado' => ok|ojo|mal, 'texto', 'ayuda' => clave|null, 'enlace' => url|null], ... ]
@@ -486,6 +525,7 @@ function lc_diagnostico(): array {
 	}
 
 	lc_act_diagnostico( $add, $buscar );
+	lc_seguridad_diagnostico( $add );
 
 	if ( ! $tipos ) {
 		return $items;

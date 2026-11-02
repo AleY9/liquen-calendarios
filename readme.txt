@@ -1,5 +1,5 @@
 === Liquen Calendarios ===
-Versión: 0.2.0 · Requiere: WordPress 6.4+, PHP 8.0+
+Versión: 0.2.1 · Requiere: WordPress 6.4+, PHP 8.0+
 
 Disponibilidad de cabañas, salones y otros recursos leída de calendarios iCal
 (Google Calendar, Booking, Airbnb). La web muestra días libres y ocupados y arma la consulta por WhatsApp.
@@ -55,6 +55,12 @@ Solo lectura: no toma reservas ni cobra.
 * Solo fechas: ni precios, ni datos de huéspedes, ni pagos.
 
 == Cambios ==
+0.2.1
+* Diagnóstico, grupo «Seguridad» (igual que en Liquen Panel): avisa si la ejecución de PHP por MCP
+  (BRICKS_ENABLE_PHP_ABILITIES) o la «Ejecución de código» de Bricks están activas en un sitio que parece
+  de producción. En un staging es normal. Staging: WordPress lo marca así, o la dirección empieza con staging.,
+  dev., test., stage. o qa. A mano: define( 'LP_ES_STAGING', true ); en el wp-config.php.
+
 0.2.0
 * Calendario de actividades: [liquen_agenda] en la web con las actividades publicadas, tomadas de sus fechas.
   Casilla «Mostrar en el calendario» por actividad (sí por defecto).
